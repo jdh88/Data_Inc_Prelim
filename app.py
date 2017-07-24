@@ -1,13 +1,16 @@
 from flask import Flask
+from flask import send_from_directory
+
 app = Flask(__name__)
 
 @app.route('/')
 def hello():
     return "Hello World!"
 
-@app.route('/plot1')
-def plot1():
-    return renter_template('frequency_comparison_graph.html')
+
+@app.route('/graphs/<path:path>')
+def send_graph(path):
+    return send_from_directory('graphs', path)
 
 if __name__ == '__main__':
     app.run()
