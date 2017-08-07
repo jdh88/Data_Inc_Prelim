@@ -15,6 +15,9 @@ def index():
 def aims():
     return render_template('aims.html')
 
+@app.route('/progress')
+def progress():
+	return render_template('progress.html')
 
 @app.route('/graphs/<path:path>')
 def send_graph(path):
