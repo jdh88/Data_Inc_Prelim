@@ -1,32 +1,48 @@
-{% extends "layout.html" %}
+{% extends "layout2.html" %}
 {% block content %}
 
 	<div align='left'>
-		<h1>Initial analysis</h1>
+		<h1>Initial Analysis</h1>
 		<div>
 			<p>
 				My preliminary analysis focused on two datasets: a 714MB dataset from Instacart of their grocery orders and a 15MB recipe dataset from Yummly.
 			</p>
 			<p>
-				Plots can be seen <a href='https://jdh-prelim.herokuapp.com/graphs/frequency_comparison_graph.html'> <b>here</b></a> and <a href='https://jdh-prelim.herokuapp.com/graphs/repeated_frac_graph.html'><b>here</b></a>
+				Plots are shown below, but can be viewed in isolation <a href='https://jdh-prelim.herokuapp.com/graphs/frequency_comparison_graph.html'> <b>here</b></a> and <a href='https://jdh-prelim.herokuapp.com/graphs/repeated_frac_graph.html'><b>here</b></a>
+			</p>
+
+			<h3>Fraction of orders that are repeats</h3>
+				{% include './graphs/repeated_frac_div.html' %}
+				{% include './graphs/repeated_frac_script.html' %}
+			<p>
+				This plot helps to answer the question of whether people re-order the same stuff or whether they try new items. After all, if we’re going to make suggestions to try new things, then it’s helpful for people to be receptive to the idea. To answer this question, I first calculated the total number of items in each order and how many of those items had been previously ordered by that user. This let me generate a fraction that describes what percentage of an order is repeated. Throwing the ‘re-ordered’ fraction into a histogram we immediately notice a mode of 1. Considering the total number of orders in this set, approximately 20% of Instacart’s orders are complete repeats of past orders! People are putting the same exact items in their basket and are not trying new things. Such individuals might be prime candidates for targeted advertising as they are currently under-engaging and not exploring new products. The next major peaks are at 0 (an order of entirely new items), and around 0.5 (an order with 50% new items) with the remaining orders distributed in a somewhat bell-like fashion. Assembled together, we see that about 80% of Instacart users try new things, great news as it means they likely won’t reject our suggestions outright.
+			</p>
+			<h3>Ingredient frequency in recipes vs orders</h3>
+				{% include './graphs/freq_comp_div.html' %}
+				{% include './graphs/freq_comp_script.html' %}
+			<p>
+				The second plot I made compares the frequency of ingredients in different recipes compared to their order frequency in Instacart. To generate it I had to generate counts and merge data from two separate sources. From this chart, we can see all the ingredients that people are ordering that also show up in the recipe list (sorry frozen pizza, you didn’t make the cut). Unsurprisingly, items like salt are mentioned often in recipes but seldom ordered whereas items like strawberries are often ordered but seldom mentioned in recipes. In contrast, garlic is mentioned often in recipes and often ordered. In general, however, the lack of an obvious correlation between the axes suggests that in general people aren’t yet ordering for recipes.
 			</p>
 		</div>
 
-		<h1>Since we last spoke</h1>
+		<h1>Newest Project Updates</h1>
 		<div>
 			<h3>Web scrapping</h3>
 			<p>
-				My recipe data set was limited in size (only 15MB and xxx recipes), so I put all of my efforts into building a web scraper. My primary target was <a href='allrecipes.com'><b>allrecipes.com</b></a> as they are massive, and well known, resource for recipes. Unfortunately, traditional web scrapping tools like <a href='https://scrapy.org/'><b>scrapy</b></a> didn't work due to the construction of their site.
+				The recipe data set that I started with was limited in size (15MB/39,774 recipes) and information content. It contained little more than a list of ingredients. I wanted more recipes and more detailed information so I put all of my efforts into building a web scraper. My primary target was <a href='allrecipes.com'><b>allrecipes.com</b></a> as they are a massive, and well known, resource for recipes. Unfortunately, I had trouble getting traditional web scrapping tools like <a href='https://scrapy.org/'><b>scrapy</b></a> to work due to the construction of their site.
 			</p>
 			<p>
-				The core problem, at least as far as I was able to figure, is that tools like scrapy work best when there is a clearly defined structure that you can predict and then crawl. For instance, when I google something, at the bottom of results page I know that there will be a next button that I can hit to get the next page. With allrecipes.com, the instead follow a pinterist infinite scroll type layout. In order to get more data, you need to interact with the site.
+				The core problem, at least as far as I was able to figure, is that tools like scrapy work best when there is a clearly defined structure that you can predict and then crawl. For instance, when I google something, at the bottom of results page I know that there will be a next button that I can hit to get the next page. With allrecipes.com, they instead follow a pinterist infinite scroll type layout. In order to get more data, you need to interact with the site.
 			</p>
 			<h3>A hidden API</h3>
 			<p>
 				To get around this problem, I used the developer tools in Chrome to look at the network traffic to/from the site when I scrolled to the bottom of a list of recipes. After a bit of analysis I was able to find what my browser was sending and worked out the precise data that I have to send to effectively get a <i>page of results</i>.
 			</p>
 			<p>
-				With this knowledge in hand, I built an automatic tool to build up a collection of recipe URLs and stored them in a Mongo database. It turns out the 'recipe cards' that are returned are not always the same type or format so I've had to do some data cleaning, but I have already collected over 10,000 recipe urls. With the urls I can then use tools beautifulsoup to parse out the ingredients and other relevant data. The final step of parsing out the ingredients is currently only partially done.
+				With this knowledge in hand, I built an automatic tool to build up a collection of recipe URLs and stored them in a Mongo database. It turns out the 'recipe cards' that are returned are not always the same type or format so I've had to do some data cleaning, but I have already collected and cleaned over 10,000 recipe urls. With the urls I can then use tools like beautifulsoup to parse out the ingredients and other relevant data. 
+			</p>
+			<p>
+				Currently, I can pull out ingredients, but I still need to do some further parsing with regex to separate quantities. I also need to figure out how to better interpret/parse ingredients like 'minced garlic' to just 'garlic'.
 			</p>
 		</div>
 	</div>
